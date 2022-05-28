@@ -1,43 +1,25 @@
-import './categories.styles.scss';
-import CategoryItem from './components/categoryitem/category-item.component';
+import Home from './routes/home/home.component';
+import { Routes, Route, Outlet } from 'react-router-dom';
+
+const Navigation = () => {
+  return (<div>
+      <div>
+        <h1>THE NAVIGATION</h1>
+      </div>
+      <Outlet />
+    </div>);
+};
+
+const Shop = () => <h2>I'm SHOP</h2>;
 
 const App = () => {
 
-  const categories = [
-    {
-      id: 1,
-      title: 'hats',
-      imageUrl: 'https://i.ibb.co/cvpntL1/hats.png'
-    },
-    {
-      id: 2,
-      title: 'jackets',
-      imageUrl: 'https://i.ibb.co/px2tCc3/jackets.png'
-    },
-    {
-      id: 3,
-      title: 'sneakers',
-      imageUrl: 'https://i.ibb.co/0jqHpnp/sneakers.png'
-    },
-    {
-      id: 4,
-      title: 'women',
-      imageUrl: 'https://i.ibb.co/GCCdy8t/womens.png'
-    },
-    {
-      id: 5,
-      title: 'men',
-      imageUrl: 'https://i.ibb.co/R70vBrQ/men.png'
-    }
-  ];
-
-  return (
-    <div className="categories-container">
-      {
-        categories.map(category => <CategoryItem key={ category.id } { ...category } />)
-      }
-    </div>
-  );
+  return (<Routes>
+      <Route path="/" element={ <Navigation /> }>
+        <Route index element={ <Home /> } />
+        <Route path="shop" element={ <Shop /> } />
+      </Route>
+    </Routes>);
 };
 
 export default App;
