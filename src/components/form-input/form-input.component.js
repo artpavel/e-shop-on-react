@@ -18,7 +18,7 @@ const FormInput = ({ label, errorMessage = '', ...otherProps }) => {
       </label>
       }
 
-      <span>{ errorMessage }</span>
+      <span className='span'>{ errorMessage }</span>
 
     </div>
   );
