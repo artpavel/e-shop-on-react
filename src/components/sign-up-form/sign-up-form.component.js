@@ -48,6 +48,7 @@ const SignUpForm = () => {
     setFormFields(defaultFormFields);
   };
 
+
   return (
     <div className="sign-up-container">
       <h2>Don't have an account?</h2>
