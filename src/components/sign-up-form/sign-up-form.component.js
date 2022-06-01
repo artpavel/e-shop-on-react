@@ -48,6 +48,7 @@ const SignUpForm = () => {
     setFormFields(defaultFormFields);
   };
 
+  // data for create inputs
   const inputs = [
     {
       id: 1,
@@ -99,7 +100,10 @@ const SignUpForm = () => {
                                          { ...input }
           />)
         }
-        <Button type="submit">Sign Up</Button>
+        <div className="buttons-container">
+          <Button type="submit">Sign Up</Button>
+          <Button type="submit" onClick={ resetFormFields }>Reset</Button>
+        </div>
       </form>
     </div>
   );
