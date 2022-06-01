@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './form-input.styles.scss';
 
-const FormInput = ({ label, ...otherProps }) => {
-  console.log({...otherProps});
+const FormInput = ({ label, errorMessage = '', ...otherProps }) => {
+  const [focused, setFocused] = useState(false);
+  const handleFocus = () => setFocused(true);
+
   return (
     <div className="group">
 
-      <input className="form-input" { ...otherProps } />
+      <input className="form-input" { ...otherProps }
+             onBlur={ handleFocus } focused={ focused.toString() }
+             onFocus={() => otherProps.name === 'confirmPassword' && setFocused(true)}
+      />
 
       { label && <label className={ `${ otherProps.value.length ? 'shrink' : '' } form-input-label` }>
         { label }
       </label>
       }
+
+      <span>{ errorMessage }</span>
 
     </div>
   );

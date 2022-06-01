@@ -56,18 +56,25 @@ const SignUpForm = () => {
       <form onSubmit={ handleSubmit }>
         <FormInput label="Display Name" type="text" name="displayName" required
                    onChange={ handleChange } value={ displayName }
+                   errorMessage="Username should be 3-16 characters"
+                   pattern="^[A-Za-z0-9]{3,16}$"
         />
 
         <FormInput label="Email" type="email" name="email" required
                    value={ email } onChange={ handleChange }
+                   errorMessage="It should be a valid email address!"
         />
 
         <FormInput label="Password" type="password" name="password" required
                    value={ password } onChange={ handleChange }
+                   errorMessage="Password should be 6-10 characters"
+                   pattern="^[A-Za-z0-9]{6,10}$"
         />
 
         <FormInput label="Confirm Password" type="password" name="confirmPassword" required
                    value={ confirmPassword } onChange={ handleChange }
+                   errorMessage="Passwords don't match!"
+                   pattern={ password }
         />
 
         <Button type="submit">Sign Up</Button>
