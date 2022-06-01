@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './sign-in-form.styles.scss';
 
 import FormInput from '../form-input/form-input.component';
@@ -8,6 +8,7 @@ import {
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup
 } from '../../utils/firebase/firebase.utils';
+import { UserContext } from '../../context/user.context';
 
 // for fields form
 const defaultFormFields = {
@@ -19,6 +20,9 @@ const SignInForm = () => {
   // state
   const [formFields, setFormFields] = useState(defaultFormFields);
 
+  // context
+  const { setCurrentUser } = useContext(UserContext);
+
   // destructor
   const { email, password } = formFields;
 
@@ -29,13 +33,14 @@ const SignInForm = () => {
 
   const handleSubmit = async event => {
     event.preventDefault();
+    console.log(event)
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(email, password);
-      console.log(response)
+      const user = await signInAuthUserWithEmailAndPassword(email, password);
+      setCurrentUser(user);
       resetFormFields();
     } catch (error) {
-      switch (error.code){
+      switch (error.code) {
         case 'auth/wrong-password':
           alert('Incorrect password for email');
           break;
@@ -43,7 +48,7 @@ const SignInForm = () => {
           alert('No user associated with this email');
           break;
         default:
-          console.log(error.message)
+          console.log(error.message);
       }
     }
   };
@@ -62,22 +67,22 @@ const SignInForm = () => {
   const inputs = [
     {
       id: 11,
-      label: "Email",
-      type:"email",
-      name:"email",
+      label: 'Email',
+      type: 'email',
+      name: 'email',
       required: true,
       errorMessage: 'It should be a valid email address!'
     },
     {
       id: 12,
-      label: "Password",
-      type: "password",
-      name: "password",
+      label: 'Password',
+      type: 'password',
+      name: 'password',
       required: true,
       errorMessage: 'Password should be 6-10 characters',
       pattern: '^[A-Za-z0-9]{6,10}$'
     }
-  ]
+  ];
 
   return (
     <div className="sign-up-container">
