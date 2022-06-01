@@ -2,7 +2,7 @@ import React from 'react';
 import './form-input.styles.scss';
 
 const FormInput = ({ label, ...otherProps }) => {
-  console.log(label)
+  console.log({...otherProps});
   return (
     <div className="group">
 
