@@ -50,7 +50,6 @@ export const CartContext = createContext({
   clearItemFromCart: () => {
   },
   cartTotal: 0,
-
 });
 
 export const CartProvider = ({ children }) => {

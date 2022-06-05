@@ -1,16 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth,
-  signInWithRedirect,
-  signInWithPopup,
-  GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  signInWithPopup,
+  signOut
 } from 'firebase/auth';
 
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, writeBatch } from 'firebase/firestore';
 
 // initialization
 const firebaseConfig = {
@@ -25,6 +24,36 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
+/* <<< WORKS with DB >>> */
+// add
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd, field) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach(object => {
+    const docRef = doc(collectionRef, object.title.toLocaleLowerCase());
+    batch.set(docRef, object);
+  })
+
+  await batch.commit();
+  console.log('done');
+}
+
+// get
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLocaleLowerCase()] = items;
+    return acc;
+  }, {});
+}
+
+
+/* --- END WORKS with DB --- */
+
 /* <<< Authentication >>> */
 const googleAuthProvider = new GoogleAuthProvider();
 googleAuthProvider.setCustomParameters({
@@ -35,7 +64,7 @@ export const auth = getAuth();
 // first method
 export const signInWithGooglePopup = () => signInWithPopup(auth, googleAuthProvider);
 // second method
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleAuthProvider);
+// export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleAuthProvider);
 /* --- END Authentication ---  */
 
 /* <<< auth with GOOGLE >>> */
@@ -81,7 +110,6 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 };
-
 
 /* <<< close user which was auth >>> */
 export const signOutUser = async () => signOut(auth);
