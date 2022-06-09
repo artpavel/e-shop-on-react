@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useReducer } from 'react';
+import { createAction } from '../utils/reducer/reducer.utils';
 
 // add
 export const addCartItem = (cartItems, productToAdd) => {
@@ -19,23 +20,23 @@ export const addCartItem = (cartItems, productToAdd) => {
 export const removeCartItem = (cartItems, cartItemToRemove) => {
   const existingCartItem = cartItems.find(cartItem => cartItem.id === cartItemToRemove.id);
 
-  if(existingCartItem.quantity === 1){
-    return cartItems.filter(item => item.id !== cartItemToRemove.id)
+  if (existingCartItem.quantity === 1) {
+    return cartItems.filter(item => item.id !== cartItemToRemove.id);
   }
 
   if (existingCartItem) {
     return cartItems.map(cartItem => cartItem.id === cartItemToRemove.id
-        ? { ...cartItem, quantity: cartItem.quantity - 1 }
-        : cartItem
+      ? { ...cartItem, quantity: cartItem.quantity - 1 }
+      : cartItem
     );
   }
 
-}
+};
 
 // remove
-export const clearCartItem = (cartItems, cartItemToClear) =>{
-  return cartItems.filter(cartItem => cartItem.id !== cartItemToClear.id)
-}
+export const clearCartItem = (cartItems, cartItemToClear) => {
+  return cartItems.filter(cartItem => cartItem.id !== cartItemToClear.id);
+};
 
 export const CartContext = createContext({
   isCartOpen: false,
@@ -52,32 +53,73 @@ export const CartContext = createContext({
   cartTotal: 0,
 });
 
+/*    R E D U C E R     */
+const INITIAL_STATE = {
+  cartItems: [],
+  cartCount: 0,
+  cartTotal: 0,
+  isCartOpen: false,
+};
+
+// reducer
+const cartReducer = (state, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case 'SET_CART_ITEMS':
+      return {
+        ...state,
+        ...payload
+      };
+    case 'SET_IS_CART_OPEN':
+      return {
+        ...state,
+        isCartOpen: payload
+      };
+    default:
+      throw new Error(`Unhandled type of ${ type } in cartReducer`);
+  }
+
+};
+
+
 export const CartProvider = ({ children }) => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
 
-  // quantity
-  useEffect(() => {
-    const newCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-    setCartCount(newCartCount);
-  }, [cartItems]);
+  // for cartReducer
+  const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE);
 
-  // total price
-  useEffect(() => {
-    const newCartTotal = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
-    setCartTotal(newCartTotal);
-  }, [cartItems]);
+  const { cartItems, isCartOpen, cartCount, cartTotal } = state;
 
-  const addItemToCart = product =>
-    setCartItems(addCartItem(cartItems, product));
+  const updateCartItemsReducer = newCartItems => {
+    const newCartCount = newCartItems.reduce((acc, item) => acc + item.quantity, 0);
+    const newCartTotal = newCartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
-  const removeItemFromCart = cartItemToRemove =>
-    setCartItems(removeCartItem(cartItems, cartItemToRemove));
+    dispatch(createAction('SET_CART_ITEMS', {
+        cartItems: newCartItems,
+        cartTotal: newCartTotal,
+        cartCount: newCartCount
+      })
+    );
+  };
 
-  const clearItemFromCart = cartItemToClear =>
-    setCartItems(clearCartItem(cartItems, cartItemToClear));
+  const addItemToCart = product => {
+    const newCartItems = addCartItem(cartItems, product);
+    updateCartItemsReducer(newCartItems);
+  };
+
+  const removeItemFromCart = cartItemToRemove => {
+    const newCartItems = removeCartItem(cartItems, cartItemToRemove);
+    updateCartItemsReducer(newCartItems);
+  };
+
+  const clearItemFromCart = cartItemToClear => {
+    const newCartItems = clearCartItem(cartItems, cartItemToClear);
+    updateCartItemsReducer(newCartItems);
+  };
+
+  const setIsCartOpen = bool => {
+    dispatch(createAction('SET_IS_CART_OPEN', bool));
+  };
 
   const value = {
     isCartOpen,
