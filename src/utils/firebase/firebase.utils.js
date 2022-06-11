@@ -33,23 +33,19 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd, fie
   objectsToAdd.forEach(object => {
     const docRef = doc(collectionRef, object.title.toLocaleLowerCase());
     batch.set(docRef, object);
-  })
+  });
 
   await batch.commit();
   console.log('done');
-}
+};
 
 // get
 export const getCategoriesAndDocuments = async () => {
   const collectionRef = collection(db, 'categories');
   const q = query(collectionRef);
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.reduce((acc, docSnapshot) => {
-    const { title, items } = docSnapshot.data();
-    acc[title.toLocaleLowerCase()] = items;
-    return acc;
-  }, {});
-}
+  return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+};
 
 
 /* --- END WORKS with DB --- */
