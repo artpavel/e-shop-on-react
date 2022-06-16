@@ -90,7 +90,7 @@ export const createUserDocumentFromAuth = async (
     }
   }
   // if user data exits
-  return userDocRef;
+  return userSnapshot;
 };
 /* --- END auth with GOOGLE --- */
 
@@ -111,5 +111,18 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 export const signOutUser = async () => signOut(auth);
 
 /* <<< monitoring auth user >>> */
-export const onAuthStateChangedListener = callback => onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = callback =>
+  onAuthStateChanged(auth, callback);
 
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject
+    );
+  });
+};
