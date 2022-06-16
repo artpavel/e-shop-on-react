@@ -4,7 +4,7 @@ import CategoriesPreview from '../categories-preview/categories-preview.componen
 import Category from '../category/category.component';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchCategoriesAsync } from '../../store/categories/category.action';
+import { fetchCategoriesStart } from '../../store/categories/category.action';
 
 const Shop = () => {
 
@@ -17,7 +17,7 @@ const Shop = () => {
 
   // give out categories from firebase with help redux-thunk
   useEffect(() => {
-    dispatch(fetchCategoriesAsync());
+    dispatch(fetchCategoriesStart());
   }, []);
 
 
